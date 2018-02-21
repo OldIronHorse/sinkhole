@@ -4,7 +4,7 @@ defmodule Sinkhole.Listener do
   
   def start_link(opts) do
     Logger.info("Sinkhole.Listener.start_link(#{Kernel.inspect(opts)})")
-    GenMQTT.start_link(__MODULE__, opts[:domain], [{:host, "euterpe3"}])
+    GenMQTT.start_link(__MODULE__, opts[:domain], [{:host, opts[:mqtt_host]}])
   end
 
   def init(args) do

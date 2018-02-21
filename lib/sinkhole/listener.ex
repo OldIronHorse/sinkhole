@@ -1,23 +1,19 @@
 defmodule Sinkhole.Listener do
   use GenMQTT
+  require Logger
+  
   def start_link(opts) do
-    IO.puts("Sinkhole.Listener.start_link(")
-    IO.inspect(opts)
-    IO.puts(")")
+    Logger.info("Sinkhole.Listener.start_link(#{Kernel.inspect(opts)})")
     GenMQTT.start_link(__MODULE__, opts[:domain], [{:host, "euterpe3"}])
   end
 
   def init(args) do
-    IO.puts("Sinkhole.Listener.init(")
-    IO.inspect(args)
-    IO.puts(")")
+    Logger.info("Sinkhole.Listener.init(#{Kernel.inspect(args)})")
     {:ok, args}
   end
 
   def child_spec(opts) do
-    IO.puts("Sinkhole.Listener.child_spec(")
-    IO.inspect(opts)
-    IO.puts(")")
+    Logger.info("Sinkhole.Listener.child_spec(#{Kernel.inspect(opts)})")
     %{
       id: "#{__MODULE__}/#{opts[:domain]}",
       start: {__MODULE__, :start_link, [opts]},
@@ -28,13 +24,13 @@ defmodule Sinkhole.Listener do
   end
 
   def on_connect(domain) do
-    IO.puts("on_connect(#{domain}): Connected. Subscribing...")
+    Logger.info("Sinkhole.Listener.on_connect(#{domain}): Connected. Subscribing to #{domain}/#")
     :ok = GenMQTT.subscribe(self(), "#{domain}/#", 0)
     {:ok, domain}
   end
 
-  def on_publish([domain | location], message, domain) do
-    IO.puts("[#{domain}] It is #{message} degrees in #{location}")
+  def on_publish([domain, location, _parameter], message, domain) do
+    Logger.info("Sinkhole.Listener.on_publish: [#{domain}] It is #{message} degrees in the #{location}")
     {:ok, domain}
   end
 end

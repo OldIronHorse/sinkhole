@@ -1,8 +1,9 @@
 defmodule Sinkhole do
   use Application
+  require Logger
 
   def start(type, args) do
-    IO.puts("Sinkhole.start(#{type}, #{args})")
+    Logger.info("Sinkhole.start(#{type}, #{args})")
     Sinkhole.Supervisor.start_link(name: Sinkhole.Supervisor)
   end
 

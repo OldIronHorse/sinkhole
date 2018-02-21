@@ -1,10 +1,9 @@
 defmodule Sinkhole.Supervisor do
   use Supervisor
+  require Logger
 
   def start_link(opts) do
-    IO.puts("Sinkhole.Supervisor.start_link(")
-    IO.inspect(opts)
-    IO.puts(")")
+    Logger.info("Sinkhole.Supervisor.start_link(#{Kernel.inspect(opts)})")
     Supervisor.start_link(__MODULE__, :ok, opts)
   end
 

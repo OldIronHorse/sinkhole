@@ -8,10 +8,11 @@ defmodule Sinkhole.Supervisor do
   end
 
   def init(:ok) do
-    children = [
-      {Sinkhole.Listener, domain: "home"},
-      {Sinkhole.Listener, domain: "office"}
-    ]
+    domains = Application.get_env(:sinkhole, :domains)
+    mqtt_host = Application.get_env(:sinkhole, :mqtt_host, "localhost")
+    Logger.info("Sinkhole.Supervisor.init: domains=#{Kernel.inspect(domains)}, mqtt_host=#{Kernel.inspect(mqtt_host)}")
+
+    children = for domain <- domains, do: {Sinkhole.Listener, domain: domain}
 
     Supervisor.init(children, strategy: :one_for_one)
   end

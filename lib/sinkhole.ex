@@ -1,7 +1,8 @@
 defmodule Sinkhole do
   use Application
 
-  def start(_type, _args) do
+  def start(type, args) do
+    IO.puts("Sinkhole.start(#{type}, #{args})")
     Sinkhole.Supervisor.start_link(name: Sinkhole.Supervisor)
   end
 

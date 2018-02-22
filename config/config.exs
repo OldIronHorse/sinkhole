@@ -20,10 +20,25 @@ use Mix.Config
 #
 #     config :logger, level: :info
 #
-config :sinkhole, 
+config :sinkhole,
   mqtt_host: "euterpe3",
-  domains: ["home", "office", "cottage"]
+  domains: ["home", "office", "cottage"],
+  db_url: "mongodb://localhost:27017/sinkhole"
 
+config :logger,
+  backends: [
+    # ,
+    :console
+    #    {Mongo.Logger, :mongodb}
+  ]
+
+config :logger, :console,
+  metadata: [:application, :module, :function, :pid],
+  # metadata_filter: [],
+  compile_time_purge_level: :info,
+  level: :info
+
+config :logger, :mongodb, level: :debug
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment
 # by uncommenting the line below and defining dev.exs, test.exs and such.

@@ -3,7 +3,7 @@ defmodule Sinkhole do
   require Logger
 
   def start(type, args) do
-    Logger.info("Sinkhole.start(#{type}, #{args})")
+    Logger.info("type=#{type}, args=#{args}")
     Sinkhole.Supervisor.start_link(name: Sinkhole.Supervisor)
   end
 

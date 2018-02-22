@@ -3,19 +3,28 @@ defmodule Sinkhole.Supervisor do
   require Logger
 
   def start_link(opts) do
-    Logger.info("Sinkhole.Supervisor.start_link(#{Kernel.inspect(opts)})")
+    Logger.info("opts=#{Kernel.inspect(opts)}")
     Supervisor.start_link(__MODULE__, :ok, opts)
   end
 
   def init(:ok) do
     domains = Application.get_env(:sinkhole, :domains)
     mqtt_host = Application.get_env(:sinkhole, :mqtt_host, "localhost")
-    Logger.info("Sinkhole.Supervisor.init: domains=#{Kernel.inspect(domains)}, mqtt_host=#{Kernel.inspect(mqtt_host)}")
+    db_url = Application.get_env(:sinkhole, :db_url)
 
-    children = for domain <- domains do 
-      {Sinkhole.Listener, [domain: domain, mqtt_host: mqtt_host]}
-    end
+    Logger.info(
+      "domains=#{Kernel.inspect(domains)}, mqtt_host=#{Kernel.inspect(mqtt_host)}, db_url=#{
+        db_url
+      }"
+    )
 
-    Supervisor.init(children, strategy: :one_for_one)
+    listeners =
+      for domain <- domains do
+        {Sinkhole.Listener, [domain: domain, mqtt_host: mqtt_host]}
+      end
+
+    db = {Mongo, url: db_url, name: :mongo}
+
+    Supervisor.init([db | listeners], strategy: :one_for_one)
   end
 end
